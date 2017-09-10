@@ -1,5 +1,8 @@
 package com.example.c2aung.happybirthday;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,9 +21,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+
+                // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
+                // app-defined int constant
+
+                return;
+            }}
         songView = (ListView)findViewById(R.id.song_list);
         songList = new ArrayList<Song>();
+
+        //get the list of song
         getSongList();
+
+        // sorting the song alphabetically
+        Collections.sort(songList, new Comparator<Song>(){
+            public int compare(Song a, Song b) {
+                return a.getTitle().compareTo(b.getTitle());
+            }
+        });
+
+        SongAdapter songAdt = new SongAdapter (this, songList);
+        songView.setAdapter(songAdt);
+
     }
     public void getSongList(){
         //retrive song info
