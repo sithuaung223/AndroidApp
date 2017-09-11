@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
@@ -60,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
         SongAdapter songAdt = new SongAdapter (this, songList);
         songView.setAdapter(songAdt);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //to fix the menu icon appear on actionbar
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     @Override

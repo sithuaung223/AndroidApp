@@ -1,17 +1,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/android">
+    xmlns:happybirthday="http://schemas.android.com/apk/res-auto"
+    >
+    <!--fix the menu icon to appear by setting happybrithday name instead of android-->
 
     <item
         android:id="@+id/action_shuffle"
         android:icon="@drawable/rand"
+        android:title="Shuffle"
         android:orderInCategory="1"
-        android:showAsAction="always"
-        android:title="Shuffle" />
+        happybirthday:showAsAction="always"
+         />
     <item
         android:id="@+id/action_end"
         android:icon="@drawable/end"
+        android:title="End"
         android:orderInCategory="2"
-        android:showAsAction="always"
-        android:title="End" />
+        happybirthday:showAsAction="always"
+         />
 
 </menu>
