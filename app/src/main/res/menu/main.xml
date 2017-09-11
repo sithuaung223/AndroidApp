@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res/android">
 
-    <!--need to add this icon picture in drawable folder-->
     <item
         android:id="@+id/action_shuffle"
         android:icon="@drawable/rand"
