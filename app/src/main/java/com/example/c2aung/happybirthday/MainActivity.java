@@ -23,13 +23,16 @@ import android.content.ServiceConnection;
 import android.view.MenuItem;
 import android.view.View;
 import com.example.c2aung.happybirthday.MusicService.MusicBinder; // import binder from another class aka MusicService
+import android.widget.MediaController.MediaPlayerControl;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MediaPlayerControl {
     private ArrayList<Song> songList;
     private ListView songView;
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
+    private MusicController controller;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         SongAdapter songAdt = new SongAdapter (this, songList);
         songView.setAdapter(songAdt);
-
+        setController();
     }
 
     @Override
@@ -143,5 +146,100 @@ public class MainActivity extends AppCompatActivity {
     public void songPicked (View view) {
         musicSrv.setSong( Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
+    }
+
+    //setting up controller
+    private void setController() {
+        controller = new MusicController(this);
+        controller.setPrevNextListeners(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                playNext();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrev();
+            }
+        });
+        controller.setMediaPlayer(this);
+        controller.setAnchorView(findViewById(R.id.song_list));
+        controller.setEnabled(true);
+    }
+    //play next
+    private void playNext(){
+        musicSrv.playNext();
+        controller.show(0);
+    }
+    // play previous
+    private void playPrev(){
+        musicSrv.playPrev();
+        controller.show(0);
+    }
+    @Override
+    public void start() {
+        musicSrv.go();
+    }
+
+    @Override
+    public void pause() {
+        musicSrv.pausePlayer();
+    }
+
+    @Override
+    public int getDuration() {
+        if(musicSrv != null && musicBound && musicSrv.isPng()){
+            return musicSrv.getDur();
+        }else{
+            return 0;
+        }
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        if(musicSrv != null && musicBound && musicSrv.isPng() ){
+            return musicSrv.getPosn();
+        }else{
+            return 0;
+        }
+    }
+
+    @Override
+    public void seekTo(int pos) {
+        musicSrv.seek(pos);
+    }
+
+    @Override
+    public boolean isPlaying() {
+        if(musicSrv != null && musicBound){
+            return musicSrv.isPng();
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return true;
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
     }
 }
