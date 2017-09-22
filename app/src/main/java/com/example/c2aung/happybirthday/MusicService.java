@@ -33,11 +33,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private final IBinder musicBind = new MusicBinder();
     private String songTitle="";
     private static final int NOTIFY_ID = 1;
+    private boolean shuffle=false;
+    private Random rand;
 
     public void onCreate(){
         super.onCreate(); //create the service
         songPosn = 0; // initialize postion
         player = new MediaPlayer(); //create player
+        rand = new Random();
         initMusicPlayer();
     }
 
@@ -153,11 +156,27 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         playSong();
     }
     public void playNext(){
-        songPosn++;
-        if(songPosn >= songs.size()){
-            songPosn = 0;
+        if(shuffle){
+            int newSong = songPosn;
+            while (newSong == songPosn){
+                newSong = rand.nextInt(songs.size());
+            }
+            songPosn = newSong;
+        }else{
+            songPosn++;
+            if(songPosn >= songs.size()){
+                songPosn = 0;
+            }
         }
         playSong();
     }
+    public void setShuffle(){
+        if(shuffle){
+            shuffle = false;
+        }else{
+            shuffle = true;
+        }
+    }
+
 
 }
