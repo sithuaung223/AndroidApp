@@ -3,6 +3,7 @@ package com.example.c2aung.happybirthday;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.IBinder;
 import java.util.ArrayList;
 import android.content.ContentUris;
@@ -12,7 +13,11 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
+import java.util.Random;
+import android.app.Notification;
+import android.app.PendingIntent;
 
 
 
@@ -26,6 +31,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private ArrayList<Song> songs; //song list
     private int songPosn; //current position
     private final IBinder musicBind = new MusicBinder();
+    private String songTitle="";
+    private static final int NOTIFY_ID = 1;
 
     public void onCreate(){
         super.onCreate(); //create the service
@@ -56,6 +63,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void playSong() {
         player.reset();
         Song playSong = songs.get(songPosn);
+        songTitle = playSong.getTitle();
         long currSong = playSong.getID();
         Uri trackUri = ContentUris.withAppendedId(
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -95,10 +103,27 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onPrepared(MediaPlayer mp) {
         //start playback
         mp.start();
+        Intent notIntent = new Intent(this, MainActivity.class);
+        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendInt = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentIntent(pendInt)
+                .setSmallIcon(R.drawable.play)
+                .setTicker(songTitle)
+                .setOngoing(true)
+                .setContentTitle("Playing")
+                .setContentText(songTitle);
+        Notification not = builder.build();
+        startForeground(NOTIFY_ID,not);
+    }
+    @Override
+    public void onDestroy(){
+        stopForeground(true);
     }
 
     public int getPosn(){
@@ -134,4 +159,5 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
         playSong();
     }
+
 }

@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayerContro
     private boolean musicBound = false;
     private MusicController controller;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
